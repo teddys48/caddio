@@ -1,0 +1,45 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy-server
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - caddy-net
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+  caddy-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: caddy-manager
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DATABASE_PATH=/data/caddy-manager.db
+      - CADDY_ADMIN_URL=http://caddy:2019
+      - CADDY_BINARY_PATH=/usr/bin/caddy
+      - APP_ENV=production
+      - SESSION_SECRET=change_this_to_a_secure_random_32_character_string_in_production
+    networks:
+      - caddy-net
+    volumes:
+      - manager_data:/data
+      - /usr/bin/caddy:/usr/bin/caddy:ro
+    depends_on:
+      - caddy
+
+networks:
+  caddy-net:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
+  manager_data:

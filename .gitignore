@@ -1,0 +1,48 @@
+# Go Binaries & Executables
+/bin/
+/backend/bin/
+caddy-manager
+*.exe
+*.exe?
+*.dll
+*.so
+*.dylib
+
+# Test Output & Artifacts
+*.out
+*.test
+*.prof
+coverage.html
+
+# Database Files
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Frontend Dependencies & Build Output
+node_modules/
+frontend/node_modules/
+frontend/dist/
+backend/frontend_dist/
+.svelte-kit/
+.vite/
+
+# Environment Secret Files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE & Editor Files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS / Scratch Directory
+scratch/
+tmp/

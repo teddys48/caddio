@@ -1,0 +1,38 @@
+# Git & VCS
+.git/
+.gitignore
+.github/
+
+# Local Node & Build Output
+node_modules/
+frontend/node_modules/
+frontend/dist/
+backend/frontend_dist/
+bin/
+backend/bin/
+caddy-manager
+
+# Databases & Runtime Data
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+/data/
+
+# Local Environment Secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Agent & Documentation Artifacts
+.agents/
+walkthrough.md
+implementation_plan.md
+scratch/
+
+# IDE & System Files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
