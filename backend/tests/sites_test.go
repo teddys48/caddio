@@ -16,6 +16,7 @@ import (
 	"caddy-manager/internal/configstore"
 	"caddy-manager/internal/database"
 	"caddy-manager/internal/models"
+	"caddy-manager/internal/runtime"
 	"caddy-manager/internal/sites"
 
 	"github.com/gofiber/fiber/v2"
@@ -294,9 +295,10 @@ func TestSitesAPI_HTTPHandlers(t *testing.T) {
 	sitesService := sites.NewService(mockCaddy, auditLogger)
 	mockVersion := &mockVersionProvider{version: "v2.10.2"}
 	configService := configstore.NewService(mockCaddy, mockVersion, configstore.NewSnapshotStore(db, 50), auditLogger)
+	runtimeService := runtime.NewService(mockCaddy, mockVersion, sitesService, configService)
 
 	app := fiber.New(fiber.Config{DisableStartupMessage: true})
-	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService)
+	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService, runtimeService)
 
 	// Authenticate admin user
 	adminUser, _ := authService.CreateInitialAdmin("admin", "Password123!")

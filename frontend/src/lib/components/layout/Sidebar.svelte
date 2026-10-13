@@ -51,10 +51,10 @@
       title: 'Observability',
       items: [
         {
-          name: 'Logs',
-          route: '/logs' as Route,
+          name: 'Runtime & Logs',
+          route: '/runtime' as Route,
           icon: ScrollText,
-          active: false,
+          active: true,
         },
         {
           name: 'History',

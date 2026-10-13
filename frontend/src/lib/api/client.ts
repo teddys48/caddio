@@ -1,7 +1,7 @@
 import type {
   APIResponse, AuthState, DashboardData, AuditLog, User, Site, SiteDiscoveryResult, SaveSiteRequest, ValidationResult,
   ConfigResponse, ValidateConfigRequest, ValidateConfigResponse, DiffConfigRequest, ConfigDiffResponse, ApplyConfigRequest,
-  ConfigHistoryItem, ConfigSnapshot, RollbackRequest
+  ConfigHistoryItem, ConfigSnapshot, RollbackRequest, RuntimeStatusResponse, RuntimeLogsResponse, RuntimeLogFilters
 } from '../types';
 
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
@@ -153,4 +153,36 @@ export const api = {
       body: JSON.stringify(payload),
     });
   },
+
+  // Runtime Monitoring & Logs
+  async getRuntimeStatus(): Promise<RuntimeStatusResponse> {
+    return request<RuntimeStatusResponse>('/api/runtime/status');
+  },
+
+  async getRuntimeLogs(filters: RuntimeLogFilters = {}): Promise<RuntimeLogsResponse> {
+    const params = new URLSearchParams();
+    if (filters.level && filters.level !== 'all') {
+      params.append('level', filters.level);
+    }
+    if (filters.search) {
+      params.append('search', filters.search);
+    }
+    if (filters.limit) {
+      params.append('limit', filters.limit.toString());
+    }
+    if (filters.cursor) {
+      params.append('cursor', filters.cursor);
+    }
+    const queryString = params.toString();
+    const url = `/api/runtime/logs${queryString ? `?${queryString}` : ''}`;
+    return request<RuntimeLogsResponse>(url);
+  },
+
+  async enableRuntimeLogging(baseHash: string): Promise<{ changed: boolean; message: string; reason?: string; hash?: string }> {
+    return request<{ changed: boolean; message: string; reason?: string; hash?: string }>('/api/runtime/enable-logging', {
+      method: 'POST',
+      body: JSON.stringify({ base_hash: baseHash }),
+    });
+  },
 };
+

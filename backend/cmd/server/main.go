@@ -22,6 +22,7 @@ import (
 	"caddy-manager/internal/configstore"
 	"caddy-manager/internal/database"
 	"caddy-manager/internal/models"
+	"caddy-manager/internal/runtime"
 	"caddy-manager/internal/sites"
 
 	"github.com/gofiber/fiber/v2"
@@ -30,7 +31,7 @@ import (
 )
 
 func main() {
-	log.Println("[INFO] Starting Caddio Phase 1...")
+	log.Println("[INFO] Starting Caddio...")
 
 	// 1. Startup Configuration Validation
 	cfg, err := config.LoadConfig()
@@ -65,6 +66,7 @@ func main() {
 	sitesService := sites.NewService(caddyClient, loggerService)
 	snapshotStore := configstore.NewSnapshotStore(db, 50)
 	configService := configstore.NewService(caddyClient, versionProvider, snapshotStore, loggerService)
+	runtimeService := runtime.NewService(caddyClient, versionProvider, sitesService, configService)
 
 	// 4. Create Fiber App
 	app := fiber.New(fiber.Config{
@@ -90,7 +92,7 @@ func main() {
 	}))
 
 	// 5. Setup Routes
-	routes.SetupRoutes(app, db, authService, caddyClient, loggerService, versionProvider, sitesService, configService)
+	routes.SetupRoutes(app, db, authService, caddyClient, loggerService, versionProvider, sitesService, configService, runtimeService)
 
 	// 6. Embedded Frontend Static Asset Handler
 	setupEmbeddedFrontend(app)

@@ -6,6 +6,7 @@ export type Route =
   | '/sites'
   | '/config'
   | '/config/history'
+  | '/runtime'
   | '/logs'
   | '/history'
   | '/settings';

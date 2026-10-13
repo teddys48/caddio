@@ -9,6 +9,7 @@ import (
 	"caddy-manager/internal/database"
 	"caddy-manager/internal/sites"
 	"caddy-manager/internal/configstore"
+	"caddy-manager/internal/runtime"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -22,6 +23,7 @@ func SetupRoutes(
 	versionProvider caddy.SystemVersionProvider,
 	sitesService *sites.Service,
 	configService *configstore.Service,
+	runtimeService *runtime.Service,
 ) {
 	healthHandler := handlers.NewHealthHandler(db, caddyClient)
 	authHandler := handlers.NewAuthHandler(authService, auditLogger)
@@ -30,6 +32,7 @@ func SetupRoutes(
 	systemHandler := handlers.NewSystemHandler(versionProvider)
 	sitesHandler := handlers.NewSitesHandler(sitesService)
 	configHandler := handlers.NewConfigHandler(configService)
+	runtimeHandler := handlers.NewRuntimeHandler(runtimeService)
 
 	// Liveness and Readiness
 	app.Get("/health", healthHandler.Health)
@@ -71,4 +74,10 @@ func SetupRoutes(
 	configGroup.Get("/history", configHandler.GetHistory)
 	configGroup.Get("/history/:id", configHandler.GetSnapshot)
 	configGroup.Post("/history/:id/rollback", configHandler.RollbackConfig)
+
+	// Runtime Monitoring API
+	runtimeGroup := protected.Group("/runtime")
+	runtimeGroup.Get("/status", runtimeHandler.GetStatus)
+	runtimeGroup.Get("/logs", runtimeHandler.GetLogs)
+	runtimeGroup.Post("/enable-logging", runtimeHandler.EnableLogging)
 }

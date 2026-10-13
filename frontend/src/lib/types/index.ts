@@ -160,3 +160,40 @@ export interface ConfigSnapshot {
 export interface RollbackRequest {
   base_hash: string;
 }
+
+export interface RuntimeStatusResponse {
+  status: 'healthy' | 'degraded' | 'unreachable' | 'unknown';
+  reachable: boolean;
+  active_config_hash: string;
+  caddy_version?: string;
+  last_checked: string;
+  server_count: number;
+  site_count: number;
+  logs_available: boolean;
+  log_source?: string;
+}
+
+export interface RuntimeLogEntry {
+  timestamp: string;
+  level: string;
+  logger?: string;
+  message: string;
+  fields?: Record<string, unknown>;
+}
+
+export interface RuntimeLogsResponse {
+  available: boolean;
+  reason?: string;
+  source?: string;
+  entries: RuntimeLogEntry[];
+  has_more: boolean;
+  next_cursor?: string;
+}
+
+export interface RuntimeLogFilters {
+  level?: string;
+  search?: string;
+  limit?: number;
+  cursor?: string;
+}
+

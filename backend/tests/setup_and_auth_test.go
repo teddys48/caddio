@@ -14,6 +14,7 @@ import (
 	"caddy-manager/internal/configstore"
 	"caddy-manager/internal/database"
 	"caddy-manager/internal/models"
+	"caddy-manager/internal/runtime"
 	"caddy-manager/internal/sites"
 
 	"github.com/gofiber/fiber/v2"
@@ -37,7 +38,8 @@ func setupTestApp(t *testing.T) (*fiber.App, *database.DB, *auth.Service, *caddy
 
 	mockVersion := &mockVersionProvider{version: "v2.10.2"}
 	configService := configstore.NewService(mockCaddy, mockVersion, configstore.NewSnapshotStore(db, 50), auditLogger)
-	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService)
+	runtimeService := runtime.NewService(mockCaddy, mockVersion, sitesService, configService)
+	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService, runtimeService)
 
 	return app, db, authService, mockCaddy
 }

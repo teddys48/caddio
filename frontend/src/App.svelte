@@ -11,6 +11,7 @@
   import SitesView from './views/SitesView.svelte';
   import ConfigView from './views/ConfigView.svelte';
   import ConfigHistoryView from './views/ConfigHistoryView.svelte';
+  import RuntimeView from './views/RuntimeView.svelte';
   import PlaceholderView from './views/PlaceholderView.svelte';
   import { Server } from 'lucide-svelte';
 
@@ -64,6 +65,8 @@
         <ConfigView />
       {:else if router.route === '/config/history' || router.route === '/history'}
         <ConfigHistoryView />
+      {:else if router.route === '/runtime' || router.route === '/logs'}
+        <RuntimeView />
       {:else if router.route === '/settings'}
         <PlaceholderView
           title="Application & Caddy Settings"

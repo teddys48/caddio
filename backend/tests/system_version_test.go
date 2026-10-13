@@ -14,6 +14,7 @@ import (
 	"caddy-manager/internal/caddy"
 	"caddy-manager/internal/configstore"
 	"caddy-manager/internal/database"
+	"caddy-manager/internal/runtime"
 	"caddy-manager/internal/sites"
 
 	"github.com/gofiber/fiber/v2"
@@ -73,9 +74,10 @@ func TestSystemCaddyVersionEndpoint_Success200(t *testing.T) {
 	mockVersion := &mockVersionProvider{version: "v2.10.2"}
 	sitesService := sites.NewService(mockCaddy, auditLogger)
 	configService := configstore.NewService(mockCaddy, mockVersion, configstore.NewSnapshotStore(db, 50), auditLogger)
+	runtimeService := runtime.NewService(mockCaddy, mockVersion, sitesService, configService)
 
 	app := fiber.New(fiber.Config{DisableStartupMessage: true})
-	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService)
+	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService, runtimeService)
 
 	req := httptest.NewRequest(http.MethodGet, "/api/system/caddy/version", nil)
 	resp, err := app.Test(req)
@@ -104,9 +106,10 @@ func TestSystemCaddyVersionEndpoint_BinaryNotFound503(t *testing.T) {
 	mockVersion := &mockVersionProvider{err: caddy.ErrBinaryNotFound}
 	sitesService := sites.NewService(mockCaddy, auditLogger)
 	configService := configstore.NewService(mockCaddy, mockVersion, configstore.NewSnapshotStore(db, 50), auditLogger)
+	runtimeService := runtime.NewService(mockCaddy, mockVersion, sitesService, configService)
 
 	app := fiber.New(fiber.Config{DisableStartupMessage: true})
-	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService)
+	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService, runtimeService)
 
 	req := httptest.NewRequest(http.MethodGet, "/api/system/caddy/version", nil)
 	resp, err := app.Test(req)
@@ -135,9 +138,10 @@ func TestSystemCaddyVersionEndpoint_CommandFailure503(t *testing.T) {
 	mockVersion := &mockVersionProvider{err: caddy.ErrExecutionFailed}
 	sitesService := sites.NewService(mockCaddy, auditLogger)
 	configService := configstore.NewService(mockCaddy, mockVersion, configstore.NewSnapshotStore(db, 50), auditLogger)
+	runtimeService := runtime.NewService(mockCaddy, mockVersion, sitesService, configService)
 
 	app := fiber.New(fiber.Config{DisableStartupMessage: true})
-	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService)
+	routes.SetupRoutes(app, db, authService, mockCaddy, auditLogger, mockVersion, sitesService, configService, runtimeService)
 
 	req := httptest.NewRequest(http.MethodGet, "/api/system/caddy/version", nil)
 	resp, err := app.Test(req)
